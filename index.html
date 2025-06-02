@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sterling Dental Clinic - Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dark-theme">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-sun" id="theme-icon"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo-section">
+            <h2>Sterling Dental</h2>
+            <p>Excellence in Care</p>
+        </div>
+        
+        <!-- 3D Rotating Tooth Model Container -->
+        <div class="tooth-3d-container">
+            <canvas id="tooth3d"></canvas>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-chart-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#appointments" class="nav-item" onclick="showSection('appointments')">
+                <i class="fas fa-calendar-check"></i>
+                <span>Appointments</span>
+            </a>
+            <a href="#patients" class="nav-item" onclick="showSection('patients')">
+                <i class="fas fa-users"></i>
+                <span>Patients</span>
+            </a>
+            <a href="#treatments" class="nav-item" onclick="showSection('treatments')">
+                <i class="fas fa-tooth"></i>
+                <span>Treatments</span>
+            </a>
+            <a href="#billing" class="nav-item" onclick="showSection('billing')">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Billing</span>
+            </a>
+            <a href="#staff" class="nav-item" onclick="showSection('staff')">
+                <i class="fas fa-user-md"></i>
+                <span>Staff</span>
+            </a>
+            <a href="#services" class="nav-item" onclick="showSection('services')">
+                <i class="fas fa-list-alt"></i>
+                <span>Services</span>
+            </a>
+            <a href="#communications" class="nav-item" onclick="showSection('communications')">
+                <i class="fas fa-envelope"></i>
+                <span>Communications</span>
+            </a>
+            <a href="#reports" class="nav-item" onclick="showSection('reports')">
+                <i class="fas fa-chart-bar"></i>
+                <span>Reports</span>
+            </a>
+        </nav>
+        
+        <div class="clinic-info">
+            <div class="staff-quick-info">
+                <div class="staff-member">
+                    <i class="fas fa-user-md"></i>
+                    <span>Dr. Biren N. Yajnik</span>
+                </div>
+                <div class="staff-member">
+                    <i class="fas fa-user-nurse"></i>
+                    <span>Nurse Edith</span>
+                </div>
+                <div class="staff-member">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Pamela (Reception)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="page-title">Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </div>
+                <div class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="User">
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Today's Appointments</h3>
+                        <p class="stat-number">12</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total Patients</h3>
+                        <p class="stat-number">1,247</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Monthly Revenue</h3>
+                        <p class="stat-number">$24,500</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Pending Appointments</h3>
+                        <p class="stat-number">8</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-charts">
+                <div class="chart-card appointments-card">
+                    <div class="chart-card-header">
+                        <h3><i class="fas fa-calendar-check"></i> Appointments Overview</h3>
+                        <div class="chart-period-selector">
+                            <button class="period-btn active" data-period="today">Today</button>
+                            <button class="period-btn" data-period="week">Week</button>
+                            <button class="period-btn" data-period="month">Month</button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <div class="chart-canvas-wrapper">
+                            <canvas id="appointmentsChart"></canvas>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="stat-item">
+                                <span class="stat-dot completed"></span>
+                                <span class="stat-label">Completed</span>
+                                <span class="stat-value">45</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-dot pending"></span>
+                                <span class="stat-label">Pending</span>
+                                <span class="stat-value">12</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-dot confirmed"></span>
+                                <span class="stat-label">Confirmed</span>
+                                <span class="stat-value">25</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-dot cancelled"></span>
+                                <span class="stat-label">Cancelled</span>
+                                <span class="stat-value">3</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-actions">
+                        <button class="action-btn" onclick="showSection('appointments')">
+                            <i class="fas fa-eye"></i> View All
+                        </button>
+                        <button class="action-btn" onclick="openModal('appointmentModal')">
+                            <i class="fas fa-plus"></i> New Appointment
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="chart-card revenue-card">
+                    <div class="chart-card-header">
+                        <h3><i class="fas fa-chart-line"></i> Revenue Trends</h3>
+                        <div class="chart-period-selector">
+                            <button class="period-btn" data-period="6m">6M</button>
+                            <button class="period-btn active" data-period="year">Year</button>
+                            <button class="period-btn" data-period="all">All</button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <div class="revenue-summary">
+                            <div class="revenue-item">
+                                <span class="revenue-label">This Month</span>
+                                <span class="revenue-amount">$25,000</span>
+                                <span class="revenue-change positive">+12%</span>
+                            </div>
+                            <div class="revenue-item">
+                                <span class="revenue-label">Last Month</span>
+                                <span class="revenue-amount">$23,000</span>
+                            </div>
+                            <div class="revenue-item">
+                                <span class="revenue-label">Average</span>
+                                <span class="revenue-amount">$18,500</span>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-wrapper">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-actions">
+                        <button class="action-btn" onclick="showSection('billing')">
+                            <i class="fas fa-file-invoice-dollar"></i> View Billing
+                        </button>
+                        <button class="action-btn" onclick="showSection('reports')">
+                            <i class="fas fa-chart-bar"></i> Reports
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recent-activities">
+                <h3>Recent Activities</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>New appointment scheduled for John Doe</span>
+                        <time>2 hours ago</time>
+                    </div>
+                    <div class="activity-item">
+                        <i class="fas fa-file-medical"></i>
+                        <span>Treatment completed for Sarah Smith</span>
+                        <time>4 hours ago</time>
+                    </div>
+                    <div class="activity-item">
+                        <i class="fas fa-money-bill"></i>
+                        <span>Payment received from Mike Johnson</span>
+                        <time>6 hours ago</time>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Appointments Section -->
+        <section id="appointments" class="content-section">
+            <div class="section-header">
+                <h2>Appointment Management</h2>
+                <button class="btn btn-primary" onclick="openModal('appointmentModal')">
+                    <i class="fas fa-plus"></i> New Appointment
+                </button>
+            </div>
+            
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button class="btn-nav" onclick="prevMonth()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h3 id="currentMonth">December 2024</h3>
+                    <button class="btn-nav" onclick="nextMonth()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be generated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="appointments-list">
+                <h3>Today's Appointments</h3>
+                <div class="appointment-cards">
+                    <div class="appointment-card">
+                        <div class="appointment-time">9:00 AM</div>
+                        <div class="appointment-patient">
+                            <h4>John Doe</h4>
+                            <p>Routine Cleaning</p>
+                        </div>
+                        <div class="appointment-status pending">Pending</div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-sm"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div class="appointment-card">
+                        <div class="appointment-time">10:30 AM</div>
+                        <div class="appointment-patient">
+                            <h4>Sarah Smith</h4>
+                            <p>Root Canal Treatment</p>
+                        </div>
+                        <div class="appointment-status confirmed">Confirmed</div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-sm"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Patients Section -->
+        <section id="patients" class="content-section">
+            <div class="section-header">
+                <h2>Patient Records</h2>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search patients..." id="patientSearch">
+                </div>
+                <button class="btn btn-primary" onclick="openModal('patientModal')">
+                    <i class="fas fa-user-plus"></i> Add Patient
+                </button>
+            </div>
+            
+            <div class="patients-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Phone</th>
+                            <th>Last Visit</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientsTableBody">
+                        <tr>
+                            <td>P001</td>
+                            <td>John Doe</td>
+                            <td>32</td>
+                            <td>+256 700 123456</td>
+                            <td>2024-11-28</td>
+                            <td><span class="status active">Active</span></td>
+                            <td>
+                                <button class="btn btn-sm" onclick="viewPatient('P001')"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm" onclick="editPatient('P001')"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>P002</td>
+                            <td>Sarah Smith</td>
+                            <td>28</td>
+                            <td>+256 700 789012</td>
+                            <td>2024-11-25</td>
+                            <td><span class="status active">Active</span></td>
+                            <td>
+                                <button class="btn btn-sm" onclick="viewPatient('P002')"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm" onclick="editPatient('P002')"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="content-section">
+            <div class="section-header">
+                <h2>Our Dental Services</h2>
+                <p class="section-subtitle">Comprehensive dental care with state-of-the-art technology</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card" data-service="cleaning">
+                    <div class="service-animation-bg">
+                        <canvas class="service-canvas" id="cleaningCanvas"></canvas>
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-tooth"></i>
+                        </div>
+                        <h3>Routine Cleaning</h3>
+                        <p>Professional dental cleaning and oral hygiene maintenance to keep your teeth healthy and sparkling.</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Deep Cleaning</span>
+                            <span class="feature-tag">Plaque Removal</span>
+                            <span class="feature-tag">Fluoride Treatment</span>
+                        </div>
+                        <div class="service-price">From $80</div>
+                        <button class="btn btn-primary service-btn" onclick="bookService('cleaning')">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="filling">
+                    <div class="service-animation-bg">
+                        <canvas class="service-canvas" id="fillingCanvas"></canvas>
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-fill-drip"></i>
+                        </div>
+                        <h3>Dental Fillings</h3>
+                        <p>High-quality composite and amalgam fillings to restore damaged teeth and prevent further decay.</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Composite Fillings</span>
+                            <span class="feature-tag">Amalgam Fillings</span>
+                            <span class="feature-tag">Color Matching</span>
+                        </div>
+                        <div class="service-price">From $120</div>
+                        <button class="btn btn-primary service-btn" onclick="bookService('filling')">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="root-canal">
+                    <div class="service-animation-bg">
+                        <canvas class="service-canvas" id="rootCanalCanvas"></canvas>
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-procedures"></i>
+                        </div>
+                        <h3>Root Canal Treatment</h3>
+                        <p>Advanced endodontic treatment to save infected teeth and eliminate pain with modern techniques.</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Pain Relief</span>
+                            <span class="feature-tag">Tooth Preservation</span>
+                            <span class="feature-tag">Digital X-rays</span>
+                        </div>
+                        <div class="service-price">From $450</div>
+                        <button class="btn btn-primary service-btn" onclick="bookService('root-canal')">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="crown">
+                    <div class="service-animation-bg">
+                        <canvas class="service-canvas" id="crownCanvas"></canvas>
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>Dental Crowns</h3>
+                        <p>Custom-made crowns to restore strength and appearance of damaged or weakened teeth.</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Porcelain Crowns</span>
+                            <span class="feature-tag">Same-Day Service</span>
+                            <span class="feature-tag">Perfect Fit</span>
+                        </div>
+                        <div class="service-price">From $750</div>
+                        <button class="btn btn-primary service-btn" onclick="bookService('crown')">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="extraction">
+                    <div class="service-animation-bg">
+                        <canvas class="service-canvas" id="extractionCanvas"></canvas>
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-tooth"></i>
+                        </div>
+                        <h3>Tooth Extraction</h3>
+                        <p>Safe and comfortable tooth removal with minimal discomfort using advanced extraction techniques.</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Pain-Free</span>
+                            <span class="feature-tag">Fast Recovery</span>
+                            <span class="feature-tag">Sedation Options</span>
+                        </div>
+                        <div class="service-price">From $150</div>
+                        <button class="btn btn-primary service-btn" onclick="bookService('extraction')">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="whitening">
+                    <div class="service-animation-bg">
+                        <canvas class="service-canvas" id="whiteningCanvas"></canvas>
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-smile-beam"></i>
+                        </div>
+                        <h3>Teeth Whitening</h3>
+                        <p>Professional whitening treatment to brighten your smile and boost your confidence.</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Instant Results</span>
+                            <span class="feature-tag">Safe Process</span>
+                            <span class="feature-tag">Long-Lasting</span>
+                        </div>
+                        <div class="service-price">From $300</div>
+                        <button class="btn btn-primary service-btn" onclick="bookService('whitening')">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="services-cta">
+                <div class="cta-content">
+                    <h3>Not sure which service you need?</h3>
+                    <p>Schedule a consultation and let our experts recommend the best treatment for you.</p>
+                    <button class="btn btn-secondary" onclick="openModal('appointmentModal')">
+                        <i class="fas fa-stethoscope"></i> Book Consultation
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Staff Section -->
+        <section id="staff" class="content-section">
+            <div class="section-header">
+                <h2>Our Professional Team</h2>
+                <p class="section-subtitle">Meet our experienced dental professionals dedicated to your oral health</p>
+                <button class="btn btn-primary" onclick="openModal('staffModal')">
+                    <i class="fas fa-user-plus"></i> Add Staff Member
+                </button>
+            </div>
+            
+            <div class="staff-grid">
+                <div class="staff-card" data-staff="dr-yajnik">
+                    <div class="staff-card-bg">
+                        <canvas class="staff-canvas" id="drYajnikCanvas"></canvas>
+                    </div>
+                    <div class="staff-image-container">
+                        <div class="staff-image-placeholder">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="staff-status online"></div>
+                    </div>
+                    <div class="staff-content">
+                        <h3>Dr. Biren N. Yajnik</h3>
+                        <span class="staff-role">Chief Dental Officer</span>
+                        <p class="staff-bio">With over 15 years of experience in general and cosmetic dentistry, Dr. Yajnik specializes in advanced restorative procedures and patient care excellence.</p>
+                        <div class="staff-specialties">
+                            <span class="specialty-tag">General Dentistry</span>
+                            <span class="specialty-tag">Cosmetic Dentistry</span>
+                            <span class="specialty-tag">Restorative Care</span>
+                        </div>
+                        <div class="staff-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">15+</span>
+                                <span class="stat-label">Years Experience</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">2,500+</span>
+                                <span class="stat-label">Patients Treated</span>
+                            </div>
+                        </div>
+                        <div class="staff-contact">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>dr.yajnik@sterling.dental</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+256 700 123456</span>
+                            </div>
+                        </div>
+                        <div class="staff-actions">
+                            <button class="action-btn primary" onclick="viewStaffSchedule('dr-yajnik')">
+                                <i class="fas fa-calendar"></i> View Schedule
+                            </button>
+                            <button class="action-btn secondary" onclick="editStaff('dr-yajnik')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="staff-card" data-staff="nurse-edith">
+                    <div class="staff-card-bg">
+                        <canvas class="staff-canvas" id="nurseEdithCanvas"></canvas>
+                    </div>
+                    <div class="staff-image-container">
+                        <div class="staff-image-placeholder nurse">
+                            <i class="fas fa-user-nurse"></i>
+                        </div>
+                        <div class="staff-status online"></div>
+                    </div>
+                    <div class="staff-content">
+                        <h3>Nurse Edith</h3>
+                        <span class="staff-role">Lead Dental Nurse</span>
+                        <p class="staff-bio">A compassionate and skilled dental nurse with 8 years of experience in patient care, sterilization protocols, and assisting in complex procedures.</p>
+                        <div class="staff-specialties">
+                            <span class="specialty-tag">Patient Care</span>
+                            <span class="specialty-tag">Sterilization</span>
+                            <span class="specialty-tag">Procedure Assistance</span>
+                        </div>
+                        <div class="staff-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">8+</span>
+                                <span class="stat-label">Years Experience</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">1,800+</span>
+                                <span class="stat-label">Procedures Assisted</span>
+                            </div>
+                        </div>
+                        <div class="staff-contact">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>edith@sterling.dental</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+256 700 234567</span>
+                            </div>
+                        </div>
+                        <div class="staff-actions">
+                            <button class="action-btn primary" onclick="viewStaffSchedule('nurse-edith')">
+                                <i class="fas fa-calendar"></i> View Schedule
+                            </button>
+                            <button class="action-btn secondary" onclick="editStaff('nurse-edith')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="staff-card" data-staff="pamela">
+                    <div class="staff-card-bg">
+                        <canvas class="staff-canvas" id="pamelaCanvas"></canvas>
+                    </div>
+                    <div class="staff-image-container">
+                        <div class="staff-image-placeholder receptionist">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="staff-status away"></div>
+                    </div>
+                    <div class="staff-content">
+                        <h3>Pamela</h3>
+                        <span class="staff-role">Reception Manager</span>
+                        <p class="staff-bio">Our friendly reception manager who ensures smooth clinic operations, appointment scheduling, and exceptional patient communication and experience.</p>
+                        <div class="staff-specialties">
+                            <span class="specialty-tag">Patient Relations</span>
+                            <span class="specialty-tag">Scheduling</span>
+                            <span class="specialty-tag">Administration</span>
+                        </div>
+                        <div class="staff-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">5+</span>
+                                <span class="stat-label">Years Experience</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">1,200+</span>
+                                <span class="stat-label">Appointments Managed</span>
+                            </div>
+                        </div>
+                        <div class="staff-contact">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>pamela@sterling.dental</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+256 700 345678</span>
+                            </div>
+                        </div>
+                        <div class="staff-actions">
+                            <button class="action-btn primary" onclick="viewStaffSchedule('pamela')">
+                                <i class="fas fa-calendar"></i> View Schedule
+                            </button>
+                            <button class="action-btn secondary" onclick="editStaff('pamela')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="staff-card" data-staff="dr-smith">
+                    <div class="staff-card-bg">
+                        <canvas class="staff-canvas" id="drSmithCanvas"></canvas>
+                    </div>
+                    <div class="staff-image-container">
+                        <div class="staff-image-placeholder orthodontist">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="staff-status offline"></div>
+                    </div>
+                    <div class="staff-content">
+                        <h3>Dr. Sarah Smith</h3>
+                        <span class="staff-role">Orthodontist</span>
+                        <p class="staff-bio">Specialized orthodontist with expertise in braces, aligners, and jaw correction. Dedicated to creating perfect smiles for patients of all ages.</p>
+                        <div class="staff-specialties">
+                            <span class="specialty-tag">Orthodontics</span>
+                            <span class="specialty-tag">Braces</span>
+                            <span class="specialty-tag">Aligners</span>
+                        </div>
+                        <div class="staff-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">12+</span>
+                                <span class="stat-label">Years Experience</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">800+</span>
+                                <span class="stat-label">Smiles Perfected</span>
+                            </div>
+                        </div>
+                        <div class="staff-contact">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>dr.smith@sterling.dental</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+256 700 456789</span>
+                            </div>
+                        </div>
+                        <div class="staff-actions">
+                            <button class="action-btn primary" onclick="viewStaffSchedule('dr-smith')">
+                                <i class="fas fa-calendar"></i> View Schedule
+                            </button>
+                            <button class="action-btn secondary" onclick="editStaff('dr-smith')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="staff-summary">
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="summary-content">
+                        <h4>Total Staff Members</h4>
+                        <span class="summary-number">4</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="summary-content">
+                        <h4>Licensed Doctors</h4>
+                        <span class="summary-number">2</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="summary-content">
+                        <h4>Online Now</h4>
+                        <span class="summary-number">2</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="summary-content">
+                        <h4>Avg. Experience</h4>
+                        <span class="summary-number">10 Years</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Additional sections will be handled by modals and JavaScript -->
+    </div>
+
+    <!-- Modals -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Appointment</h3>
+                <span class="close" onclick="closeModal('appointmentModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label>Patient</label>
+                        <select required>
+                            <option>Select Patient</option>
+                            <option>John Doe</option>
+                            <option>Sarah Smith</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input type="time" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Treatment</label>
+                        <select required>
+                            <option>Select Treatment</option>
+                            <option>Routine Cleaning</option>
+                            <option>Root Canal</option>
+                            <option>Tooth Extraction</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea placeholder="Additional notes..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('appointmentModal')">Cancel</button>
+                <button class="btn btn-primary" type="submit">Schedule Appointment</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
